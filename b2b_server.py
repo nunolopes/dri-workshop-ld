@@ -5,7 +5,7 @@ Copyright (c) 2012 The Apache Software Foundation, Licensed under the Apache Lic
 
 @author: Michael Hausenblas, http://mhausenblas.info/#i
 @author: Nuno Lopes, http://nunolopes.org/
-@since: 2012-10-04
+@since: 2012-10-17
 @status: init
 """
 
@@ -46,7 +46,6 @@ class B2BServer(BaseHTTPRequestHandler):
 
 	# executes the SPARQL query remotely and returns JSON results
 	def exec_query(self, person_frag):
-                endpoint = 'http://dbpedia.org/sparql/'
 		endpoint = 'http://europeana-triplestore.isti.cnr.it/sparql/'
 		q = """
 			SELECT * WHERE { 
@@ -54,18 +53,18 @@ class B2BServer(BaseHTTPRequestHandler):
 			} LIMIT 10
 		"""
 		logging.debug('Query to endpoint %s with query\n%s' %(endpoint, q))
-                try:
-                        self.send_response(200)
-                        p = {"query": q, "format": "application/json"}
-                        headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
+		try:
+			self.send_response(200)
+			p = {"query": q, "format": "application/json"}
+			headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
 
-                        request = requests.get(endpoint, params=p, headers=headers)
-                        logging.debug('Request:\n%s' %(request.url))
-        
-                        logging.debug('Result:\n%s' %(json.dumps(request.json, sort_keys=True, indent=4)))
-                        self.wfile.write(json.dumps(request.json))
-                except:
-                        self.send_error(500, 'Something went wrong here on the server side.')
+			request = requests.get(endpoint, params=p, headers=headers)
+			logging.debug('Request:\n%s' %(request.url))
+
+			logging.debug('Result:\n%s' %(json.dumps(request.json, sort_keys=True, indent=4)))
+			self.wfile.write(json.dumps(request.json))
+		except:
+			self.send_error(500, 'Something went wrong here on the server side.')
 
 
 
