@@ -48,23 +48,27 @@ class B2BServer(BaseHTTPRequestHandler):
 	def exec_query(self, person_frag):
 		endpoint = 'http://europeana-triplestore.isti.cnr.it/sparql/'
 		q = """
-			SELECT * WHERE { 
+			SELECT * WHERE {
 				?s ?p ?o .
 			} LIMIT 10
 		"""
 		logging.debug('Query to endpoint %s with query\n%s' %(endpoint, q))
-		try:
-			self.send_response(200)
-			p = {"query": q, "format": "application/json"}
-			headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
+		lower = q.lower()
+		if "select" in lower or "construct" in lower or "ask" in lower or "describe" in lower:
+			try:
+				self.send_response(200)
+				p = {"query": q, "format": "application/json"}
+				headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
 
-			request = requests.get(endpoint, params=p, headers=headers)
-			logging.debug('Request:\n%s' %(request.url))
+				request = requests.get(endpoint, params=p, headers=headers)
+				logging.debug('Request:\n%s' %(request.url))
 
-			logging.debug('Result:\n%s' %(json.dumps(request.json, sort_keys=True, indent=4)))
-			self.wfile.write(json.dumps(request.json))
-		except:
-			self.send_error(500, 'Something went wrong here on the server side.')
+				logging.debug('Result:\n%s' %(json.dumps(request.json, sort_keys=True, indent=4)))
+				self.wfile.write(json.dumps(request.json))
+			except:
+				self.send_error(500, 'Something went wrong here on the server side.')
+		else:
+			self.send_error(500, 'Please provide a valid SPARQL query!')
 
 
 
