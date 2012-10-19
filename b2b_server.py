@@ -9,7 +9,7 @@ Copyright (c) 2012 The Apache Software Foundation, Licensed under the Apache Lic
 @status: init
 """
 
-import sys, os, logging, datetime, urllib, urllib2, json, requests
+import sys, os, logging, datetime, urllib, urllib2, json, requests, urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler
 
 # configuration
@@ -28,8 +28,10 @@ class B2BServer(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 		# API calls
-		if self.path.startswith('/q/'):
-			self.exec_query(self.path.split('/')[-1])
+		if self.path.startswith('/europeana/'):
+			self.exec_query('http://europeana-triplestore.isti.cnr.it/sparql/', self.path.split('/')[-1])
+		elif self.path.startswith('/dydra/'):
+			self.exec_query('http://dydra.com/mhausenblas/realising-opportunities-digital-humanities/sparql', self.path.split('/')[-1])
 		else:
 			self.send_error(404,'File Not Found: %s' % self.path)
 		return
@@ -45,25 +47,20 @@ class B2BServer(BaseHTTPRequestHandler):
 			return
 
 	# executes the SPARQL query remotely and returns JSON results
-	def exec_query(self, person_frag):
-		endpoint = 'http://europeana-triplestore.isti.cnr.it/sparql/'
-		q = """
-			SELECT * WHERE {
-				?s ?p ?o .
-			} LIMIT 10
-		"""
-		logging.debug('Query to endpoint %s with query\n%s' %(endpoint, q))
-		lower = q.lower()
+	def exec_query(self, endpoint, query):
+		query = urllib2.unquote(query)
+		lower = query.lower()
 		if "select" in lower or "construct" in lower or "ask" in lower or "describe" in lower:
 			try:
-				self.send_response(200)
-				p = {"query": q, "format": "application/json"}
-				headers = {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
-
+				p = {"query": query } 
+				headers = { 'Accept': 'application/sparql-results+json', 'Access-Control-Allow-Origin': '*' }
+				logging.debug('Query to endpoint %s with query\n%s' %(endpoint, query))
 				request = requests.get(endpoint, params=p, headers=headers)
 				logging.debug('Request:\n%s' %(request.url))
-
 				logging.debug('Result:\n%s' %(json.dumps(request.json, sort_keys=True, indent=4)))
+				self.send_response(200)
+				self.send_header('Content-type', 'application/json')
+				self.end_headers()
 				self.wfile.write(json.dumps(request.json))
 			except:
 				self.send_error(500, 'Something went wrong here on the server side.')
