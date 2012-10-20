@@ -1,41 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Beer2Beer - The beer preferences directory</title>
+	<title>Authors N' Books</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="A B2B app">
 	<meta name="author" content="Michael Hausenblas">
 	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-	<style>
-		body {
-			padding-top: 60px;
-			margin: auto 5em;
-		}
-		.beer {
-			margin: 1em 0;
-			padding: 10px;
-			border-bottom: 1px solid #e0e0e0;
-			width: 80%;
-		}
-		.beer img {
-			float: right; 
-			margin-left: 50px;
-			webkit-box-shadow: 5px 5px 18px rgba(50, 50, 50, 0.61);
-			-moz-box-shadow: 5px 5px 18px rgba(50, 50, 50, 0.61);
-			box-shadow: 5px 5px 18px rgba(50, 50, 50, 0.61);
-			-webkit-border-radius: 4px;
-			-moz-border-radius: 4px;
-			border-radius: 4px;
-		}
-		.beer p {
-			text-align: justify;
-			font-family: Serif;
-			font-size: 110%;
-		}
-	</style>
 	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="ab-app.css" rel="stylesheet">
 	<!--[if lt IE 9]>
 	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
@@ -44,11 +17,11 @@
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="#">Beer2Beer</a>
+				<a class="brand" href="#">Authors N' Books</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li class="active"><a href="#">Home</a></li>
-						<li><a href="">Source</a></li>
+						<li><a href="https://github.com/nunolopes/dri-workshop-ld" target="_blank">Source</a></li>
 					</ul>
 				</div>
 			</div>
@@ -56,31 +29,28 @@
 	</div>
 	<div class="container">
 		<div class="page-header">
-		  <h1>Beer2Beer <small>The beer preferences directory</small></h1>
+		  <h1>Authors N' Books <small>The directory for authors and books ...</small></h1>
 		</div>
 		<div class="well">
-			<h2>Person</h2>
-			<input type="text" placeholder="Type a person's name here" id="person-name" />
-			<span class="help-block">Provide the name of the person whose beer preferences you want to look up.</span>
-			<button id="lookup-beer-pref" class="btn btn-primary">Look it up!</button>
+			<h2>Author or Book</h2>
+			<input class="input-xlarge" type="text" id="ab-term" autofocus="autofocus" />
+			<span class="help-block">Provide the name of an author or a book title here, you want to look up.</span>
+			<button id="lookup-ab" class="btn btn-primary">Look it up!</button>
 		</div>
 		<div>
-			<h2>Favourite beers</h2>
+			<h2>Results</h2>
 			<div id="result">
-                        <div id="out"></div>
-                        </div>
+				<div id="out"></div>
+			</div>
 		</div>
 	</div>
-	<hr>
-	<footer class="pull-right">
-		<p>
-		Copyright &copy; 2012 <a href="http://mhausenblas.info/#i">Michael Hausenblas</a>, Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="">Apache License, Version 2.0</a>
-		</p>
+	<footer class="muted">
+		Copyright &copy; 2012 <a href="http://mhausenblas.info/#i">Michael Hausenblas</a> and <a href="http://nunolopes.org/">Nuno Lopes</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
 	</footer>
 	
 	<script src="jquery.js"></script>
 	<script src="bootstrap/js/bootstrap.js"></script>
 	<script src="rdf_store_min.js"></script>
-	<script src="b2b-app.js"></script>
+	<script src="ab-app.js"></script>
 </body>
 </html>

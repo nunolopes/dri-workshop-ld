@@ -1,5 +1,5 @@
 """
-The Beer2Beer back-end. 
+The Authors N' Books back-end. 
 
 Copyright (c) 2012 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
 
@@ -9,7 +9,8 @@ Copyright (c) 2012 The Apache Software Foundation, Licensed under the Apache Lic
 @status: init
 """
 
-import sys, os, logging, datetime, urllib, urllib2, json, requests, urlparse
+import sys, logging, datetime, urllib, urllib2, json, requests, urlparse
+from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler
 
 # configuration
@@ -27,13 +28,34 @@ else:
 class B2BServer(BaseHTTPRequestHandler):
 
 	def do_GET(self):
+		parsed_path = urlparse.urlparse(self.path)
+		target_url = parsed_path.path[1:]
+		
 		# API calls
 		if self.path.startswith('/europeana/'):
 			self.exec_query('http://europeana-triplestore.isti.cnr.it/sparql/', self.path.split('/')[-1])
 		elif self.path.startswith('/dydra/'):
 			self.exec_query('http://dydra.com/mhausenblas/realising-opportunities-digital-humanities/sparql', self.path.split('/')[-1])
+		# static stuff (for standalone mode - typically served by Apache or nginx)
+		elif self.path == '/':
+			self.serve_content('index.html')
+		elif self.path.endswith('.ico'):
+			self.serve_content(target_url, media_type='image/x-icon')
+		elif self.path.endswith('.html'):
+			self.serve_content(target_url, media_type='text/html')
+		elif self.path.endswith('.js'):
+			self.serve_content(target_url, media_type='application/javascript')
+		elif self.path.endswith('.css'):
+			self.serve_content(target_url, media_type='text/css')
+		elif self.path.startswith('/img/'):
+			if self.path.endswith('.gif'):
+				self.serve_content(target_url, media_type='image/gif')
+			elif self.path.endswith('.png'):
+				self.serve_content(target_url, media_type='image/png')
+			else:
+				self.send_error(404,'File Not Found: %s' % target_url)
 		else:
-			self.send_error(404,'File Not Found: %s' % self.path)
+			self.send_error(404,'File Not Found: %s' % target_url)
 		return
 
 	# changes the default behavour of logging everything - only in DEBUG mode
@@ -45,6 +67,19 @@ class B2BServer(BaseHTTPRequestHandler):
 				pass
 		else:
 			return
+
+	# serves static content from file system
+	def serve_content(self, p, media_type='text/html'):
+		try:
+			f = open(curdir + sep + p)
+			self.send_response(200)
+			self.send_header('Content-type', media_type)
+			self.end_headers()
+			self.wfile.write(f.read())
+			f.close()
+			return
+		except IOError:
+			self.send_error(404,'File Not Found: %s' % self.path)
 
 	# executes the SPARQL query remotely and returns JSON results
 	def exec_query(self, endpoint, query):
@@ -67,14 +102,11 @@ class B2BServer(BaseHTTPRequestHandler):
 		else:
 			self.send_error(500, 'Please provide a valid SPARQL query!')
 
-
-
-
 if __name__ == '__main__':
 	try:
 		from BaseHTTPServer import HTTPServer
 		server = HTTPServer(('', DEFAULT_PORT), B2BServer)
-		logging.info('B2B server started, use {Ctrl+C} to shut-down ...')
+		logging.info('AB server started, use {Ctrl+C} to shut-down ...')
 		server.serve_forever()
 	except Exception, e:
 		logging.error(e)
