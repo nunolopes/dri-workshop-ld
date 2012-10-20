@@ -5,8 +5,11 @@ body {
 .ab {
 	margin: 1em 0;
 	padding: 10px;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #f0f0f0;
 	width: 80%;
+}
+.more-details {
+	margin: 20px;
 }
 img {
 	float: right; 

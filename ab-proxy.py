@@ -14,8 +14,10 @@ from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler
 
 # configuration
-DEBUG = True
+DEBUG = False
 DEFAULT_PORT = 8998
+DYDRA_EP = 'http://dydra.com/mhausenblas/realising-opportunities-digital-humanities/sparql'
+EUROPEANA_EP = 'http://europeana-triplestore.isti.cnr.it/sparql/'
 
 if DEBUG:
 	FORMAT = '%(asctime)-0s %(levelname)s %(message)s [at line %(lineno)d]'
@@ -32,10 +34,10 @@ class B2BServer(BaseHTTPRequestHandler):
 		target_url = parsed_path.path[1:]
 		
 		# API calls
-		if self.path.startswith('/europeana/'):
-			self.exec_query('http://europeana-triplestore.isti.cnr.it/sparql/', self.path.split('/')[-1])
-		elif self.path.startswith('/dydra/'):
-			self.exec_query('http://dydra.com/mhausenblas/realising-opportunities-digital-humanities/sparql', self.path.split('/')[-1])
+		if self.path.startswith('/dydra'):
+			self.exec_query(DYDRA_EP, target_url[target_url.index('/')+1:]) # slice from first '/' till end to reconstruct query
+		elif self.path.startswith('/europeana'):
+			self.exec_query(EUROPEANA_EP, target_url[target_url.index('/')+1:])
 		# static stuff (for standalone mode - typically served by Apache or nginx)
 		elif self.path == '/':
 			self.serve_content('index.html')
@@ -83,6 +85,7 @@ class B2BServer(BaseHTTPRequestHandler):
 
 	# executes the SPARQL query remotely and returns JSON results
 	def exec_query(self, endpoint, query):
+		if DEBUG: logging.debug('GOT QUERY\n%s' %(query))
 		query = urllib2.unquote(query)
 		lower = query.lower()
 		if "select" in lower or "construct" in lower or "ask" in lower or "describe" in lower:
