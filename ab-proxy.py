@@ -14,10 +14,11 @@ from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler
 
 # configuration
-DEBUG = False
+DEBUG = True
 DEFAULT_PORT = 8998
 DYDRA_EP = 'http://dydra.com/mhausenblas/realising-opportunities-digital-humanities/sparql'
 EUROPEANA_EP = 'http://europeana-triplestore.isti.cnr.it/sparql/'
+DBPEDIA_EP = 'http://dbpedia.org/sparql/'
 
 if DEBUG:
 	FORMAT = '%(asctime)-0s %(levelname)s %(message)s [at line %(lineno)d]'
@@ -38,6 +39,8 @@ class B2BServer(BaseHTTPRequestHandler):
 			self.exec_query(DYDRA_EP, target_url[target_url.index('/')+1:]) # slice from first '/' till end to reconstruct query
 		elif self.path.startswith('/europeana'):
 			self.exec_query(EUROPEANA_EP, target_url[target_url.index('/')+1:])
+		elif self.path.startswith('/dbpedia'):
+			self.exec_query(DBPEDIA_EP, target_url[target_url.index('/')+1:])
 		# static stuff (for standalone mode - typically served by Apache or nginx)
 		elif self.path == '/':
 			self.serve_content('index.html')
@@ -49,7 +52,7 @@ class B2BServer(BaseHTTPRequestHandler):
 			self.serve_content(target_url, media_type='application/javascript')
 		elif self.path.endswith('.css'):
 			self.serve_content(target_url, media_type='text/css')
-		elif self.path.startswith('/img/'):
+		elif self.path.startswith('/bootstrap/img'):
 			if self.path.endswith('.gif'):
 				self.serve_content(target_url, media_type='image/gif')
 			elif self.path.endswith('.png'):
