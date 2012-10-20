@@ -16,5 +16,10 @@ Then, you can open [`http://localhost:8998/`](http://localhost:8998/) in your br
 
 ![Screen shot of the AB app.](https://raw.github.com/nunolopes/dri-workshop-ld/master/doc/ab-app-screenshot-2012-10-20.png "Screen shot of the AB app.")
 
+If you then search for either authors (such as `Goethe`) or book titles (like, `Moby Dick`) you should see something like:
+
+![Screen shot of a result in the AB app.](https://raw.github.com/nunolopes/dri-workshop-ld/master/doc/ab-app-result-screenshot-2012-10-20.png "Screen shot of a result in the AB app.")
+
+
 ## License
 All software in this repository is licensed under the [Apache License, Version 2.0 ](http://www.apache.org/licenses/LICENSE-2.0) and all Linked Data is being made available under [CC0](http://creativecommons.org/publicdomain/zero/1.0/ "Creative Commons &mdash; CC0 1.0 Universal").
