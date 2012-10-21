@@ -1,4 +1,4 @@
-var WRAPPER_URL = 'http://localhost:8998/'; // where ab-proxy.py serves
+var WRAPPER_URL = 'http://srvgal85.deri.ie/ab-app/'; // where ab-proxy.py serves
 var ENTITY_LIMIT = 50;
 
 $(document).ready(function() {
