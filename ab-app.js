@@ -36,14 +36,14 @@ function queryAB(abTerm) {
 
 // renders the SPARQL result set for author or books
 function renderABResults(data) {
-	var abresult = $('<div class="ab"></div>');
 	var results = data.results.bindings;
 
 	$("#out").html("");
 	for (var i=0; i < results.length; i++) {
-		abresult.append('<h3>'+ results[i].o.value + ' <small><a class="muted" href="' + results[i].s.value + '" title="' + results[i].s.value + '">#</a></small></h3>');
-		findAliases(results[i].s.value, abresult);
-		$("#out").append(abresult);
+		renderCoreInfo(results[i].s.value, results[i].o.value, function(entityID, element){
+			findAliases(entityID, element);
+		});
+		
 	}
 	$("#result").slideDown('200');
 }
@@ -61,10 +61,9 @@ function findAliases(entityID, element) {
 				var ds = '';
 				buf = '<div class="more-details">';
 				for (var i=0; i < results.length; i++) {
-					// buf += '<div><span class="badge badge-info">' + i + '</span> <a href="' + results[i].alias.value + '" target="_blank">' + results[i].alias.value  + '</a></div>';
 					ds = getDataspace(results[i].alias.value); // determine from which dataspace the alias originates
 					if(ds == 'dbpedia') {
-						renderDBPediaEntity(results[i].alias.value, element)
+						renderDBPediaEntity(results[i].alias.value, element);
 					}
 					else {
 						renderEuropeanaEntity(results[i].alias.value, element);
@@ -73,10 +72,14 @@ function findAliases(entityID, element) {
 				buf += '</div>';
 				element.append(buf);
 			}
-			else element.append('No aliases found ...');
+			else { 
+				element.append('No aliases found ...');
+			}
+			$("#out").append(element);
 		},
 		error:  function(msg){
-			return element.append('Error executing aliases query.');
+			element.append('Error executing aliases query.');
+			$("#out").append(element);
 		} 
 	});
 }
@@ -134,7 +137,40 @@ function renderEuropeanaEntity(entityID, element){
 	});
 }
 
-function renderEntity(entityID, element, limit){
+function renderCoreInfo(entityID, entityTitle, callback){
+	var q = 'SELECT * WHERE { <' + entityID +'> a ?etype . }';
+	var element;
+	
+	console.log('EXECUTING: ' + q);
+	$.ajax({
+		url: WRAPPER_URL + 'dydra/' + escape(q),
+		success: function(data){
+			if(data) {
+				var results = data.results.bindings;
+				if(results[0].etype.value == 'http://example.com/Book') {
+					element = $('<div class="ab-book"></div>');
+					element.append('<i class="icon-book"></i> <span class="muted">A book</span><h3>' + entityTitle + ' <small><a class="muted" href="' + entityID + '" title="' + entityID + '">#</a></small></h3>');
+				}
+				else {
+					if(results[0].etype.value == 'http://xmlns.com/foaf/0.1/Person' ||  results[0].etype.value == 'http://schema.org/Person') {
+						element = $('<div class="ab-author"></div>');
+						element.append('<i class="icon-user"></i>  <span class="muted">An author</span><h3>' + entityTitle + ' <small><a class="muted" href="' + entityID + '" title="' + entityID + '">#</a></small></h3>');
+					}
+				}
+			}
+			else {
+				element.append('No entity details found.');
+			} 
+			if(callback) callback(entityID, element);
+		},
+		error:  function(msg){
+			element.append('Error executing entity query.');
+			if(callback) callback(entityID, element);
+		} 
+	});
+}
+
+function renderEntity(entityID, element, limit, callback){
 	var q = 'SELECT * WHERE { <' + entityID +'> ?p ?o . }';
 	var buf = '';
 	var ep = getDataspace(entityID);
@@ -156,10 +192,14 @@ function renderEntity(entityID, element, limit){
 				buf += '</tbody></table>';
 				element.append(buf);
 			}
-			else element.append('No entity details found.');
+			else {
+				element.append('No entity details found.');
+			} 
+			if(callback) callback(entityID);
 		},
 		error:  function(msg){
-			return element.append('Error executing entity query.');
+			element.append('Error executing entity query.');
+			if(callback) callback(entityID);
 		} 
 	});
 }
