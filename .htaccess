@@ -1,0 +1,4 @@
+RewriteEngine on 
+RewriteRule ^dydra/(.*)$ http://localhost:8998/dydra/$1 [P]
+RewriteRule ^dbpedia/(.*)$ http://localhost:8998/dbpedia/$1 [P]
+RewriteRule ^europeana/(.*)$ http://localhost:8998/europeana/$1 [P]
