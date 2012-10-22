@@ -1,2 +1,5 @@
-RewriteEngine on 
-RewriteRule ^wrapper/(.*)$ http://140.203.155.169:8998/$1 [P,QSA]
+# RewriteEngine on 
+# RewriteRule ^wrapper/(.*)$ http://140.203.155.169:8998/$1 [P,QSA]
+
+ProxyPass /wrapper/ http://140.203.155.169:8998/
+ProxyPassReverse /wrapper/ http://140.203.155.169:8998/
