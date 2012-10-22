@@ -34,6 +34,8 @@ class B2BServer(BaseHTTPRequestHandler):
 		parsed_path = urlparse.urlparse(self.path)
 		target_url = parsed_path.path[1:]
 		
+		if DEBUG: logging.debug('TARGET URL\n%s' %(target_url))
+		
 		# API calls
 		if self.path.startswith('/dydra'):
 			self.exec_query(DYDRA_EP, target_url[target_url.index('/')+1:]) # slice from first '/' till end to reconstruct query
