@@ -1,2 +1,4 @@
 RewriteEngine on 
-RewriteRule ^wrapper/(.*)$ http://localhost:8998/$1 [P]
+
+RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
+RewriteRule ^(.*)/$ http://localhost:8998/$1/ [P]

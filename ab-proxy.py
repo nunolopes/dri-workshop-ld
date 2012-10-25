@@ -34,13 +34,15 @@ class B2BServer(BaseHTTPRequestHandler):
 		parsed_path = urlparse.urlparse(self.path)
 		target_url = parsed_path.path[1:]
 		
+		if DEBUG: logging.debug('TARGET URL\n%s' %(target_url + parsed_path.query))
+		
 		# API calls
 		if self.path.startswith('/dydra'):
-			self.exec_query(DYDRA_EP, target_url[target_url.index('/')+1:]) # slice from first '/' till end to reconstruct query
+			self.exec_query(DYDRA_EP, parsed_path.query)
 		elif self.path.startswith('/europeana'):
-			self.exec_query(EUROPEANA_EP, target_url[target_url.index('/')+1:])
+			self.exec_query(EUROPEANA_EP, parsed_path.query)
 		elif self.path.startswith('/dbpedia'):
-			self.exec_query(DBPEDIA_EP, target_url[target_url.index('/')+1:])
+			self.exec_query(DBPEDIA_EP, parsed_path.query)
 		# static stuff (for standalone mode - typically served by Apache or nginx)
 		elif self.path == '/':
 			self.serve_content('index.html')
@@ -64,14 +66,14 @@ class B2BServer(BaseHTTPRequestHandler):
 		return
 
 	# changes the default behavour of logging everything - only in DEBUG mode
-	def log_message(self, format, *args):
-		if DEBUG:
-			try:
-				BaseHTTPRequestHandler.log_message(self, format, *args)
-			except IOError:
-				pass
-		else:
-			return
+	# def log_message(self, format, *args):
+	# 	if DEBUG:
+	# 		try:
+	# 			BaseHTTPRequestHandler.log_message(self, format, *args)
+	# 		except IOError:
+	# 			pass
+	# 	else:
+	# 		return
 
 	# serves static content from file system
 	def serve_content(self, p, media_type='text/html'):

@@ -1,4 +1,4 @@
-var WRAPPER_URL = 'http://srvgal85.deri.ie/ab-app/wrapper/'; // where ab-proxy.py serves
+var WRAPPER_URL = window.location.href;
 var ENTITY_LIMIT = 50;
 
 $(document).ready(function() {
@@ -19,7 +19,7 @@ function queryAB(abTerm) {
 	
 	console.log('EXECUTING: ' + q);
 	$.ajax({
-		url: WRAPPER_URL + 'dydra' + '/' + escape(q),
+		url: WRAPPER_URL + 'dydra/?' + escape(q),
 		success: function(data){
 			if(data.results.bindings.length > 0) {
 				renderABResults(data);
@@ -54,7 +54,7 @@ function findAliases(entityID, element) {
 	
 	console.log('EXECUTING: ' + q);
 	$.ajax({
-		url: WRAPPER_URL + 'dydra' + '/' + escape(q),
+		url: WRAPPER_URL + 'dydra/?' + escape(q),
 		success: function(data){
 			if(data) {
 				var results = data.results.bindings;
@@ -90,7 +90,7 @@ function renderDBPediaEntity(entityID, element){
 
 	console.log('EXECUTING: ' + q);
 	$.ajax({
-		url: WRAPPER_URL + 'dbpedia' + '/' + escape(q),
+		url: WRAPPER_URL + 'dbpedia/?' + escape(q),
 		success: function(data){
 			if(data) {
 				var results = data.results.bindings;
@@ -118,7 +118,7 @@ function renderEuropeanaEntity(entityID, element){
 
 	console.log('EXECUTING: ' + q);
 	$.ajax({
-		url: WRAPPER_URL + 'europeana' + '/' + escape(q),
+		url: WRAPPER_URL + 'europeana/?' + escape(q),
 		success: function(data){
 			if(data) {
 				var results = data.results.bindings;
@@ -143,7 +143,7 @@ function renderCoreInfo(entityID, entityTitle, callback){
 	
 	console.log('EXECUTING: ' + q);
 	$.ajax({
-		url: WRAPPER_URL + 'dydra/' + escape(q),
+		url: WRAPPER_URL + 'dydra/?' + escape(q),
 		success: function(data){
 			if(data) {
 				var results = data.results.bindings;
@@ -181,7 +181,7 @@ function renderEntity(entityID, element, limit, callback){
 	
 	console.log('EXECUTING: ' + q + '\n against ' + ep);
 	$.ajax({
-		url: WRAPPER_URL + ep + '/' + escape(q),
+		url: WRAPPER_URL + ep + '/?' + escape(q),
 		success: function(data){
 			if(data) {
 				var results = data.results.bindings;
